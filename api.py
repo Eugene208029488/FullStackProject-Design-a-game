@@ -199,7 +199,7 @@ class TicTacToeApi(remote.Service):
                       name='get_user_games',
                       http_method='GET')
     def get_user_games(self, request):
-        """Returns all of an individual User's games"""
+        """Returns all of an individual User's active games"""
         user = User.query(User.name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException(
