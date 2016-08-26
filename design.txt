@@ -1,0 +1,12 @@
+1. Added the following properties to the Game Model
+    - next_turn - to indicate next player turn
+    - board - this will represent the 3x3 tic tac toe board grid using repeated stringproperty.
+    - history - I was contemplating whether to build another 'kind' to store the history but decided to go with repeated Jsonproperty in the Game kind instead since there's only a max of 9 turns per game.
+2. Added a new Ranking kind to capture the player's ranking based on winning percentage.
+    - user - Associated with User model via KeyProperty
+    - winning_percent = this is updated by task queue everytime a game is complete.
+
+Other design approach
+1. need to implement a strong consistency for the Score to ensure we have updated score data when computing winning percentage. To do this I have to assign user as the ancestor key for the Score kind.
+2. I did not create an ancestor key for the game since this is a 2 players game so I have to use property filter to get all the user's game.
+3. The game logic is not that complex so I did not seperate out the logic from the API code.
