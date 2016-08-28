@@ -5,10 +5,8 @@ move game logic to another file. Ideally the API will be simple, concerned
 primarily with communication to/from the API's users."""
 
 import random
-import logging
 import endpoints
 from protorpc import remote, messages
-from google.appengine.api import memcache
 from google.appengine.api import taskqueue
 from google.appengine.ext import ndb
 
@@ -61,6 +59,8 @@ class TicTacToeApi(remote.Service):
         if not player2:
             raise endpoints.NotFoundException(
                 'Player2 does not exist!')
+        if player1 == player2:
+           raise endpoints.ConflictException('Cannot play against yourself')
 
         # randomize who gets the 1st turn
         next_turn = random.randint(1, 2)
@@ -97,10 +97,14 @@ class TicTacToeApi(remote.Service):
                       response_message=StringMessage,
                       path='game/{urlsafe_game_key}/cancel',
                       name='cancel_game',
-                      http_method='PUT')
+                      http_method='DELETE')
     def cancel_game(self, request):
         """Cancel an active game."""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
+
+        #check if game exist.
+        if not game:
+            raise endpoints.NotFoundException('Game not found! Already cancelled')
 
         if game.game_over:
             raise endpoints.NotFoundException('Cannot cancel completed game')
@@ -116,6 +120,10 @@ class TicTacToeApi(remote.Service):
     def make_move(self, request):
         """Makes a move. Returns a game state with message"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
+
+        #check if game exist.  if game does not exist prevent any move.
+        if not game:
+            raise endpoints.NotFoundException('Game does not exist.  Create a new game.')
 
         # Checks if game is complete
         if game.game_over:

@@ -15,6 +15,9 @@ Many different Tic Tac Toe games can be played by many different Users at any
 given time. Each game can be retrieved or played by using the path parameter
 `urlsafe_game_key`.
 
+##Scoring Rules
+Player wins if he/she was able to successfully place 3 marks in succession either horizontally, vertically or diagonal on the 3x3 grid.  We keep track of both winner and loser in the Score kind.  Winning player gets a 'win' record and loser gets a 'lose' record created in the Score kind.  In case of a 'Tie' wherein there's no empty space left on the grid and no winner found then both players get a 'Tie' record created in the Score kind.
+
 ##Files Included:
  - api.py: Contains endpoints and game playing logic.
  - app.yaml: App configuration.
